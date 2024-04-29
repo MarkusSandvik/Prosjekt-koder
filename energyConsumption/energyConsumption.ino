@@ -4,6 +4,9 @@ const int startCountPin = 34;
 
 const int readings = 50;
 
+int expectedIdealSpeed = 30;
+int expectedIdealAcceleration = 2;
+
 const int accelerationOffset = 0.5;
 
 int speedArrayCounter = 0;
@@ -134,11 +137,11 @@ float getAverageAcceleration(){
     for (int i = 0; i < accelerationReadings; i++){
         accelerationSum += accelerationArray[i];
     } // end for
-    
+
     float currentAverageAcceleration = (accelerationSum / readings);
 
     // Finds average value of current calculation and previously stored calculations
-    float averageAcceleration = (currentAverageAcceleration + previousAverageAcceleration) / 2; 
+    float averageAcceleration = (currentAverageAcceleration + previousAverageAcceleration) / 2;                 // Remove for first prototype
     previousAverageSpeed = averageAcceleration; 
 
     // Calculates and returns the average value in this interval
@@ -161,11 +164,20 @@ void countStartStop(){
     if (currentMillis - previousStopRemoveMillis >= stopRemoveInterval){
         previousStopRemoveMillis = currentMillis;
         startStopCounter -= 1;
+        startStopCounter = constrain(startStopCounter, 0, 255);
     } // end if
 } // end void
 
-void calculateDriverScore(){
-    
+void calculateDriverScore(){                                                            // First version idea
+    unsigned long currentMillis = millis();
+    float expectedIdealScore = expectedIdealSpeed * expectedIdealScore;
+
+    if (currentMillis - previousCalculationMillis >= calculationInterval){
+        float averageSpeed = getAverageSpeed();
+        float averageAcceleration = getAverageAcceleration();
+
+        float calculatedScore = averageSpeed*averageAcceleration;
+    }
 }
 
 void printReport(){
